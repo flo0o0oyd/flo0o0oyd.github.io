@@ -1,0 +1,326 @@
+body {
+  margin: 0;
+  font-family: "Stack Sans Notch", sans-serif;
+  font-weight: 400;
+  background-color: lightgrey;
+  color: #222;
+}
+
+/* --------------------------------------------------------- */ 
+/* General */
+
+header {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  padding: 1rem 3rem;
+  background-color: lightgrey;
+  border-bottom: 3px solid #613942;
+}
+
+header h1 {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color:lightgrey;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-family: "Stack Sans Notch";
+}
+
+/* --------------------------------------------------------- */ 
+/* For the cover */
+
+.maincover {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  /* background-color:#e8dbcb; */
+  justify-content: center;
+  height: 100vh;
+  flex-wrap: wrap;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(255,255,255,0.6)),
+    url("images/back1.JPG");
+  background-size: cover;
+  background-position: center;
+}
+
+.hover-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 55vw;
+  flex-grow: 1;
+  height: 30vh;               
+  overflow: hidden;
+  transition: all 0.8s ease;
+}
+
+.photocover {
+  flex: 0 0 300px;   
+  transition: transform 0.8s ease;
+  /* background-color: pink; */
+}
+.photocover img {
+  width: 20vw;
+  height: 20vw;
+  margin-right: 0px; 
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transition: transform 0.8s ease;
+}
+
+.infocover {
+  max-width: 400px;
+  margin-left: 0px;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 0.8s ease;
+  color: white;
+  font-size: 30px;
+  /* background-color: pink; */
+}
+
+.infocover h2 {
+  font-size:54px;
+  color: white;
+  font-family: "Stack Sans Notch"
+}
+
+.infocover p {
+  color:#ddd;
+  font-size: 20px;
+}
+
+.hover-section:hover .photocover {
+  transform: translateX(-100px); 
+}
+
+.hover-section:hover .infocover {
+  opacity: 1;                   
+  transform: translateX(0);      
+}
+
+.footernote {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* --------------------------------------------------------------------------- */
+
+/* About Page */
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0vw;
+  height: 80vh;
+  width: 100%;
+  background-color: lightgrey;
+  /* background-image: 
+    linear-gradient(rgba(160, 160, 160, 0.6), rgba(255,255,255,0.6)),
+    url("images/back2.png");
+  background-size: cover;
+  background-position: center; */
+}
+
+.panel {
+  width: 20vw;                
+  height: 80vh;  
+  /* background-color: #7a9aab; */
+  border: 0px solid #613942;
+  /* border-radius: 10px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 0px rgba(0,0,0,0.2);
+}
+
+.panel.left-top {
+  /* background-color: #e2b9b3; */
+    background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(255,255,255,0.4)),
+    url("images/back3.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.panel.left-bottom {
+  /* background-color: #e2b9b3; */
+    background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.4), rgba(0,0,0,0.4)),
+    url("images/back4.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.panel.right-top {
+  /* background-color: #e2b9b3; */
+    background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.4), rgba(0,0,0,0.4)),
+    url("images/back5.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.panel.right-bottom {
+  /* background-color: #e2b9b3; */
+    background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(255,255,255,0.4)),
+    url("images/back5.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.panel.left-top:hover {
+  transform: translateY(-10px);
+}
+
+.panel.left-bottom:hover {
+  transform: translateY(-10px);
+}
+
+.panel.right-top:hover {
+  transform: translateY(-10px);
+}
+
+.panel.right-bottom: hover {
+  transform: translateY(-10px);
+}
+
+/* 中间的信息面板 */
+.panel.center {
+  /* width: 22vw; */
+  background-color: #e8dbcb;
+  color: #f5f5f5;
+  align-items: flex-start;
+  /* padding: 1rem; */
+  flex-direction: column;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+    url("images/portrait_3.png");
+  background-size: cover;
+  background-position: center;
+}
+
+.panel.center h2 {
+  font-size: 30px;
+  color: #333;
+  margin-bottom: 1rem;
+  margin-left:3rem;
+  text-align: left;
+  font-family: "Stack Sans Notch"
+}
+
+.panel.center p {
+  font-size: 1rem;         
+  line-height: 1.8;     
+  color: #333;
+  text-align: left;        
+  padding: 0 3rem 3rem 3rem; 
+}
+
+.panel.center a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+
+/* 四个按钮样式 */
+button {
+  background-color: #e2b9b3;
+  color: #111;
+  font-size: 0.8rem;
+  padding: 1rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 2px 3px #234;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: #e2b9b3;
+  transform: scale(1.05);
+}
+
+
+/* --------------------------------------------------------------------------- */
+
+.photo {
+  flex: 0 0 300px;
+  margin: 2rem;
+  text-align: center;
+  transform: translateX(-5vw);
+}
+.photo img {
+  width: 20vw;
+  height: 20vw;
+  object-fit: cover;
+  border-radius: 50%;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+  transition: transform 0.6s ease;
+}
+.photo img:hover {
+  transform: scale(1.05);
+}
+
+.intro {
+  max-width: 400px;
+  margin: 2rem;
+}
+.intro h2 {
+  font-size: 3rem;
+  margin: 0;
+}
+.intro p {
+  margin-top: 0.5rem;
+  color: #555;
+  line-height: 1.6;
+}
+
+.buttons {
+  margin-top: 1.5rem;
+}
+.buttons a {
+  display: inline-block;
+  text-decoration: none;
+  font-weight: bold;
+  color: #000;
+  padding: 2rem 2rem;
+  border-radius: 50%;
+  text-align: center;
+  width: 120px;
+  margin: 0.5rem;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.resume { background-color: #ffcc80; }   /* 黄 */
+.projects { background-color: #ffab40; } /* 红 */
+.contact { background-color: #ff6f20; }  /* 蓝 */
+
+.buttons a:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.9rem;
+  color: #613942;
+}
