@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  font-family: "Stack Sans Notch", sans-serif;
+  font-weight: 400;
+  background-color: lightgrey;
+  color: #222;
+}
+
+/* --------------------------------------------------------- */ 
+/* General */
+
+header {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  padding: 1rem 3rem;
+  background-color: lightgrey;
+  border-bottom: 3px solid #613942;
+}
+
+header h1 {
+  font-size: 40px;
+  font-weight: 600;
+}
+
+main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color:lightgrey;
+  justify-content: center;
+  flex-wrap: wrap;
+  font-family: "Stack Sans Notch";
+}
+
+/* --------------------------------------------------------- */ 
+/* For the cover */
+
+.maincover {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: space-between;
+  /* background-color:#e8dbcb; */
+  justify-content: center;
+  height: 100vh;
+  flex-wrap: wrap;
+  background-image: 
+    linear-gradient(rgba(0, 0, 0, 0.6), rgba(255,255,255,0.6)),
+    url("images/back1.JPG");
+  background-size: cover;
+  background-position: center;
+}
+
+.hover-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 55vw;
+  flex-grow: 1;
+  height: 30vh;               
+  overflow: hidden;
+  transition: all 0.8s ease;
+}
+
+.photocover {
+  flex: 0 0 300px;   
+  transition: transform 0.8s ease;
+  /* background-color: pink; */
+}
+.photocover img {
+  width: 20vw;
+  height: 20vw;
+  margin-right: 0px; 
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transition: transform 0.8s ease;
+}
+
+.infocover {
+  max-width: 400px;
+  margin-left: 0px;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: all 0.8s ease;
+  color: white;
+  font-size: 30px;
+  /* background-color: pink; */
+}
+
+.infocover h2 {
+  font-size:54px;
+  color: white;
+  font-family: "Stack Sans Notch"
+}
+
+.infocover p {
+  color:#ddd;
+  font-size: 20px;
+}
+
+.hover-section:hover .photocover {
+  transform: translateX(-100px); 
+}
+
+.hover-section:hover .infocover {
+  opacity: 1;                   
+  transform: translateX(0);      
+}
+
+.footernote {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}

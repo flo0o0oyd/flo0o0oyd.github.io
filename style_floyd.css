@@ -6,6 +6,15 @@ body {
   color: #222;
 }
 
+html, body {
+  height: 100%;       /* 让100%有参照 */
+  margin: 0;
+  padding: 0;
+}
+main, .main-container {
+  height: 100vh;      /* 或 100%，取决于布局 */
+}
+
 /* --------------------------------------------------------- */ 
 /* General */
 
@@ -23,304 +32,205 @@ header h1 {
   font-weight: 600;
 }
 
-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color:lightgrey;
-  justify-content: center;
-  flex-wrap: wrap;
-  font-family: "Stack Sans Notch";
-}
-
 /* --------------------------------------------------------- */ 
-/* For the cover */
 
-.maincover {
-  display: flex;
+.main-container {
   align-items: center;
-  flex-direction: column;
-  justify-content: space-between;
-  /* background-color:#e8dbcb; */
-  justify-content: center;
-  height: 100vh;
-  flex-wrap: wrap;
-  background-image: 
-    linear-gradient(rgba(0, 0, 0, 0.6), rgba(255,255,255,0.6)),
-    url("images/back1.JPG");
+  display: grid;
+  gap: 3vw;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.8), rgba(0, 0,0, 0.5)),
+    url("images/back2.png");
   background-size: cover;
   background-position: center;
 }
 
-.hover-section {
+.picture,
+.info-panel,
+.panel-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 55vw;
-  flex-grow: 1;
-  height: 30vh;               
-  overflow: hidden;
-  transition: all 0.8s ease;
+  height: 100%;
+  /* border: 1px dashed red; */
 }
 
-.photocover {
-  flex: 0 0 300px;   
-  transition: transform 0.8s ease;
-  /* background-color: pink; */
+.picture {
+  width: 33vw;
+  background: transparent;
+  align-items: flex-end;
 }
-.photocover img {
-  width: 20vw;
-  height: 20vw;
-  margin-right: 0px; 
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-  transition: transform 0.8s ease;
+.picture img {
+  width: 25vw;
+  height: auto;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
 
-.infocover {
-  max-width: 400px;
-  margin-left: 0px;
-  opacity: 0;
-  transform: translateX(60px);
-  transition: all 0.8s ease;
-  color: white;
+
+.info-panel {
+  position: relative;        /* 建立定位上下文 */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 40vw;
+  height: 80%;
+  background-color: rgba(255, 255, 255, 0.4);
+  color: #333;
+  padding: 2rem;
+  border-radius: 30px;
+  gap: 2vh; 
+  overflow: hidden;          /* 防止图片溢出 */
+}
+
+.name {
   font-size: 30px;
-  /* background-color: pink; */
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  color: #333;
+  text-align: left;
+  margin: 0;                 /* 去掉默认外边距 */
 }
 
-.infocover h2 {
-  font-size:54px;
-  color: white;
-  font-family: "Stack Sans Notch"
+.position {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  color: #333;
+  text-align: left;
+  margin: 0;
 }
 
-.infocover p {
-  color:#ddd;
-  font-size: 20px;
+.info-panel h2 {
+  font-size: 50px;
+  line-height: 1.3;
+  margin: 0.5rem 0;          /* 控制标题上下间距 */
+  text-align: left;
+  font-family: "Stack Sans Notch";
+  color: #333;
 }
 
-.hover-section:hover .photocover {
-  transform: translateX(-100px); 
+.bio {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+  text-align: left;
+  margin: 0;                 /* 去掉默认外边距 */
 }
 
-.hover-section:hover .infocover {
-  opacity: 1;                   
-  transform: translateX(0);      
+.info-panel a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
 }
 
-.footernote {
-  text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
-  color: #666;
+.name, .position, .info-panel h2, .bio {
+  padding: 0vh 2vw;
+  /* border: 1px dashed red;  */
 }
 
-/* --------------------------------------------------------------------------- */
+.panel-logo {
+  position: absolute;
+  right: 5vw;
+  bottom: 2vh;
+  width: 10vw;               /* 根据视觉调整 */
+  height: auto;
+  opacity: 1;              /* 略微透明更协调 */
+  transition: opacity 0.3s ease;
+}
+.panel-logo:hover {
+  opacity: 0.8;                /* 鼠标悬停时亮一点 */
+}
 
-/* About Page */
+.panel-logo2 {
+  position: absolute;
+  right: 2vw;
+  top: 2vh;
+  width: 5vw;               /* 根据视觉调整 */
+  height: auto;
+  opacity: 1;              /* 略微透明更协调 */
+  transition: opacity 0.3s ease;
+}
+.panel-logo2:hover {
+  opacity: 0.8;                /* 鼠标悬停时亮一点 */
+}
 
-.main-container {
-  display: flex;
-  justify-content: center;
+
+.panel-container {
+  flex-direction: column;
+  /* width: 20vw; */
   align-items: center;
-  gap: 0vw;
-  height: 80vh;
-  width: 100%;
-  background-color: lightgrey;
-  /* background-image: 
-    linear-gradient(rgba(160, 160, 160, 0.6), rgba(255,255,255,0.6)),
-    url("images/back2.png");
-  background-size: cover;
-  background-position: center; */
+  justify-content: center;
+  gap: 2rem;
+  width: 80%;
+  height: 80%;
 }
 
 .panel {
-  width: 20vw;                
-  height: 80vh;  
-  /* background-color: #7a9aab; */
+  width: 12vw;
+  height: 12vw;
   border: 0px solid #613942;
-  /* border-radius: 10px; */
+  border-radius:50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: all 0.6s ease;
+  /* left: 6vw */
+}
+
+.panel .overlay {
+  position: absolute;
+  border-radius: 50%;
+  inset: 0;
+  color: white;
+  font-size: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  text-align: center;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 0px rgba(0,0,0,0.2);
+  opacity: 0;
+  transition: all 0.4s ease;
+  text-decoration: none;
+  font-weight: bold;
 }
 
-.panel.left-top {
-  /* background-color: #e2b9b3; */
-    background-image: 
+.panel.cv {
+  background-image:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(255,255,255,0.4)),
     url("images/back3.png");
-  background-size: cover;
-  background-position: center;
+    background-size: cover;
+    background-position: center;
 }
-
-.panel.left-bottom {
-  /* background-color: #e2b9b3; */
-    background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.4), rgba(0,0,0,0.4)),
+.panel.projects {
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.4), rgba(255,255,255,0.4)),
     url("images/back4.png");
-  background-size: cover;
-  background-position: center;
+    background-size: cover;
+    background-position: center;
 }
-
-.panel.right-top {
-  /* background-color: #e2b9b3; */
-    background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.4), rgba(0,0,0,0.4)),
-    url("images/back5.png");
-  background-size: cover;
-  background-position: center;
-}
-
-.panel.right-bottom {
-  /* background-color: #e2b9b3; */
-    background-image: 
+.panel.gallery {
+  background-image:
     linear-gradient(rgba(0, 0, 0, 0.4), rgba(255,255,255,0.4)),
     url("images/back5.png");
-  background-size: cover;
-  background-position: center;
-}
-
-.panel.left-top:hover {
-  transform: translateY(-10px);
-}
-
-.panel.left-bottom:hover {
-  transform: translateY(-10px);
-}
-
-.panel.right-top:hover {
-  transform: translateY(-10px);
-}
-
-.panel.right-bottom: hover {
-  transform: translateY(-10px);
-}
-
-/* 中间的信息面板 */
-.panel.center {
-  /* width: 22vw; */
-  background-color: #e8dbcb;
-  color: #f5f5f5;
-  align-items: flex-start;
-  /* padding: 1rem; */
-  flex-direction: column;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-    url("images/portrait_3.png");
-  background-size: cover;
-  background-position: center;
-}
-
-.panel.center h2 {
-  font-size: 30px;
-  color: #333;
-  margin-bottom: 1rem;
-  margin-left:3rem;
-  text-align: left;
-  font-family: "Stack Sans Notch"
-}
-
-.panel.center p {
-  font-size: 1rem;         
-  line-height: 1.8;     
-  color: #333;
-  text-align: left;        
-  padding: 0 3rem 3rem 3rem; 
-}
-
-.panel.center a {
-  text-decoration: none;
-  color: #333;
-  font-weight: bold;
+    background-size: cover;
+    background-position: center;
 }
 
 
-/* 四个按钮样式 */
-button {
-  background-color: #e2b9b3;
-  color: #111;
-  font-size: 0.8rem;
-  padding: 1rem 1.2rem;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  box-shadow: 2px 3px #234;
-  transition: all 0.2s ease;
-}
 
-button:hover {
-  background-color: #e2b9b3;
-  transform: scale(1.05);
-}
+.panel:hover { transform: translateY(-10px); }
+.panel:hover .overlay { background: rgba(0,0,0,0.4); opacity: 1; }
+.panel .overlay:hover { background: rgba(0, 0, 0, 0.55); }
 
 
-/* --------------------------------------------------------------------------- */
 
-.photo {
-  flex: 0 0 300px;
-  margin: 2rem;
-  text-align: center;
-  transform: translateX(-5vw);
-}
-.photo img {
-  width: 20vw;
-  height: 20vw;
-  object-fit: cover;
-  border-radius: 50%;
-  box-shadow: 0 8px 18px rgba(0,0,0,0.4);
-  transition: transform 0.6s ease;
-}
-.photo img:hover {
-  transform: scale(1.05);
-}
-
-.intro {
-  max-width: 400px;
-  margin: 2rem;
-}
-.intro h2 {
-  font-size: 3rem;
-  margin: 0;
-}
-.intro p {
-  margin-top: 0.5rem;
-  color: #555;
-  line-height: 1.6;
-}
-
-.buttons {
-  margin-top: 1.5rem;
-}
-.buttons a {
-  display: inline-block;
-  text-decoration: none;
-  font-weight: bold;
-  color: #000;
-  padding: 2rem 2rem;
-  border-radius: 50%;
-  text-align: center;
-  width: 120px;
-  margin: 0.5rem;
-  transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.resume { background-color: #ffcc80; }   /* 黄 */
-.projects { background-color: #ffab40; } /* 红 */
-.contact { background-color: #ff6f20; }  /* 蓝 */
-
-.buttons a:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-footer {
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.9rem;
-  color: #613942;
-}
