@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fenfen | Floyd Liu</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --paper: rgba(255, 255, 255, 0.82);
+      --text: #24211d;
+      --muted: #7c7164;
+      --border: rgba(36, 33, 29, 0.12);
+      --shadow: 0 18px 50px rgba(36, 33, 29, 0.10);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-height: 100%;
+      background: var(--bg);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(255, 221, 168, 0.55), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(198, 218, 199, 0.55), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .site-header {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: "Archivo Black", sans-serif;
+      letter-spacing: -0.03em;
+      font-size: 1.08rem;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 650;
+      box-shadow: none;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    .cat-page {
+      width: min(1120px, calc(100% - 40px));
+      margin: 10px auto 60px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .cat-header {
+      padding: 42px 32px;
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 8px);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      text-align: center;
+    }
+
+    .cat-header h1 {
+      margin: 0;
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(2.8rem, 7vw, 5.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+    }
+
+    .cat-header p {
+      max-width: 720px;
+      margin: 18px auto 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    .cat-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 22px;
+    }
+
+    .cat-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+      box-shadow: 0 10px 24px rgba(36, 33, 29, 0.08);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+
+    .cat-card:hover {
+      transform: translateY(-6px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 30px rgba(36, 33, 29, 0.12);
+    }
+
+    .cat-card img {
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+      display: block;
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .cat-caption {
+      padding: 14px 16px 18px;
+      font-size: 0.95rem;
+      font-weight: 650;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        width: min(100% - 24px, 1120px);
+        padding: 22px 0 10px;
+        display: block;
+      }
+
+      .brand {
+        font-size: 1.08rem;
+      }
+
+      .brand img {
+        width: 42px;
+        height: 42px;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .nav-links a {
+        padding: 8px 14px;
+        font-size: 0.86rem;
+      }
+
+      .cat-page {
+        width: min(100% - 24px, 1120px);
+        margin: 18px auto 44px;
+      }
+
+      .cat-header {
+        padding: 30px 20px;
+        border-radius: 24px;
+      }
+
+      .cat-header h1 {
+        font-size: 3rem;
+      }
+
+      .cat-gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <img src="images/fenfen1.png" alt="small cat logo">
+      <span>Floyd Liu</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="about_v2.html">About</a>
+      <a href="project.html">Projects</a>
+      <a href="gallery_v2.html">Gallery</a>
+      <a href="cats.html" aria-current="page">Cats</a>
+    </nav>
+  </header>
+
+  <main class="cat-page">
+    <section class="cat-header">
+      <h1>Fenfen</h1>
+      <p>
+        A tiny archive of my cat — professional supervisor of midnight coding,
+        document reviewer, and part-time keyboard occupier.
+      </p>
+    </section>
+
+    <section class="cat-gallery">
+      <article class="cat-card">
+        <img src="catphoto/cat1.jpg" alt="Fenfen 1" loading="lazy">
+        <div class="cat-caption">Weird cat</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat2.jpg" alt="Fenfen 2" loading="lazy">
+        <div class="cat-caption">Post-lunch scratch, very serious business.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat3.jpg" alt="Fenfen 3" loading="lazy">
+        <div class="cat-caption">In the bean bag.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat4.jpg" alt="Fenfen 4" loading="lazy">
+        <div class="cat-caption">Beauty.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat5.jpg" alt="Fenfen 5" loading="lazy">
+        <div class="cat-caption">She didn't like this.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat6.jpg" alt="Fenfen 6" loading="lazy">
+        <div class="cat-caption">She liked the boxes.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat7.JPG" alt="Fenfen 7" loading="lazy">
+        <div class="cat-caption">Temporary burst of chaos.</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat8.JPG" alt="Fenfen 8" loading="lazy">
+        <div class="cat-caption">What are you doing?</div>
+      </article>
+
+      <article class="cat-card">
+        <img src="catphoto/cat9.JPG" alt="Fenfen 9" loading="lazy">
+        <div class="cat-caption">Bread</div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Floyd Liu · Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --paper: rgba(255, 255, 255, 0.82);
+      --text: #24211d;
+      --muted: #7c7164;
+      --border: rgba(36, 33, 29, 0.12);
+      --shadow: 0 18px 50px rgba(36, 33, 29, 0.10);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(255, 221, 168, 0.55), transparent 32rem),
+        radial-gradient(circle at bottom right, rgba(198, 218, 199, 0.55), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .site-header {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 28px 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: "Archivo Black", sans-serif;
+      letter-spacing: -0.03em;
+      font-size: 1.08rem;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 650;
+      box-shadow: none;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current="page"] {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    .page {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 10px 0 72px;
+    }
+
+    .gallery-panel {
+      padding: clamp(20px, 4vw, 42px);
+      border: 1px solid var(--border);
+      border-radius: calc(var(--radius) + 8px);
+      background: var(--paper);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+
+    .gallery-header {
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(2.4rem, 7vw, 5.2rem);
+      line-height: 0.92;
+      letter-spacing: -0.08em;
+    }
+
+    .subtitle {
+      max-width: 620px;
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 18px;
+    }
+
+    .gallery-card {
+      margin: 0;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .gallery-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 5;
+      object-fit: cover;
+    }
+
+    figcaption {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 13px 14px 15px;
+      font-size: 0.92rem;
+      line-height: 1.35;
+    }
+
+    .photo-title {
+      font-weight: 650;
+    }
+
+    .photo-location {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    @media (max-width: 640px) {
+      .site-header {
+        width: min(100% - 24px, 1120px);
+        padding: 22px 0 10px;
+        display: block;
+      }
+
+      .brand {
+        font-size: 1.08rem;
+      }
+
+      .brand img {
+        width: 42px;
+        height: 42px;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      .nav-links a {
+        padding: 8px 14px;
+        font-size: 0.86rem;
+      }
+
+      .page {
+        width: min(100% - 24px, 1120px);
+        padding: 18px 0 44px;
+      }
+
+      .gallery-panel {
+        padding: 18px;
+        border-radius: 24px;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      figcaption {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <img src="images/fenfen1.png" alt="small cat logo" />
+      <span>Floyd Liu</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="about_v2.html">About</a>
+      <a href="project.html">Projects</a>
+      <a href="gallery_v2.html" aria-current="page">Gallery</a>
+      <a href="cats.html">Cats</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <section class="gallery-panel">
+      <header class="gallery-header">
+        <h1>Gallery</h1>
+      </header>
+
+      <div class="gallery-grid">
+        <figure class="gallery-card">
+          <img src="photo/annecy_2025_park.JPG" alt="Calisthenics park" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Calisthenics park</span>
+            <span class="photo-location">Annecy · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/annecy_2025_park2.JPG" alt="Cycler by the lake" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Cycler by the lake</span>
+            <span class="photo-location">Annecy · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_autumnstreet.JPG" alt="Autumn Street" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Autumn Street</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_biulding.JPG" alt="Building 1" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Building 1</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_charch.JPG" alt="Street Corner" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Street Corner</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_house.JPG" alt="Green" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Green</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_market.JPG" alt="Budapest Central Market" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Budapest Central Market</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_park.JPG" alt="Park in Budapest" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Park in Budapest</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_street.JPG" alt="Street in Budapest" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Street 1</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/bud_2025_street3.JPG" alt="Street in Budapest" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Street 2</span>
+            <span class="photo-location">Budapest · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/florz_2025_piti.JPG" alt="Pitti Palace in Florence" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Pitti Palace</span>
+            <span class="photo-location">Florence · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/gen_2025_bird.JPG" alt="People feeding birds by the Jet d'eau in Geneva" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Flying</span>
+            <span class="photo-location">Geneve · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/gen_2025_evening.JPG" alt="Evening in Geneva" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Evening</span>
+            <span class="photo-location">Geneve · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/gen_2025_feed.JPG" alt="People feeding birds by the Jet d'eau in Geneva" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Feeding Birds</span>
+            <span class="photo-location">Geneve · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/gen_2025_street.JPG" alt="Rainy street in Geneva" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Street 3</span>
+            <span class="photo-location">Geneve · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/gen_2025_water_fount.JPG" alt="Birds gathering near the water fountain in Geneva" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Birds</span>
+            <span class="photo-location">Geneve · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/milan_2025_church.JPG" alt="On the roof of Duomo Milan" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Duomo Milan</span>
+            <span class="photo-location">Milan · 2025</span>
+          </figcaption>
+        </figure>
+
+        <figure class="gallery-card">
+          <img src="photo/milan_2025_church2.JPG" alt="Art on the front door of Duomo Milan" loading="lazy" />
+          <figcaption>
+            <span class="photo-title">Duomo Milan Door Art</span>
+            <span class="photo-location">Milan · 2025</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

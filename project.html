@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projects | Floyd Liu</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Stack+Sans+Notch:wght@200..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style_floyd.css" />
+
+  <style>
+    :root {
+      --cream: #fff8ed;
+      --ink: #24201c;
+      --soft-ink: #655a4e;
+      --orange: #f5a142;
+      --peach: #ffe3bf;
+      --card: rgba(255, 255, 255, 0.74);
+      --border: rgba(36, 32, 28, 0.13);
+      --shadow: 0 12px 28px rgba(80, 45, 10, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 12%, rgba(245, 161, 66, 0.18), transparent 28%),
+        radial-gradient(circle at 85% 18%, rgba(255, 227, 191, 0.75), transparent 30%),
+        radial-gradient(circle at 50% 95%, rgba(245, 161, 66, 0.10), transparent 34%),
+        var(--cream);
+      color: var(--ink);
+      font-family: "Plus Jakarta Sans", sans-serif;
+    }
+
+    .projects-page {
+      width: min(1120px, calc(100% - 40px));
+      height: 100vh;
+      margin: 0 auto;
+      padding: 28px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      color: var(--ink);
+      font-family: "Archivo Black", sans-serif;
+      letter-spacing: -0.03em;
+      font-size: 1.08rem;
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 0.86rem;
+      font-weight: 650;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .nav-links a:hover {
+      transform: translateY(-2px);
+      background: #fff;
+    }
+
+    .intro-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 22px;
+      align-items: end;
+      flex-shrink: 0;
+      padding-top: 4px;
+    }
+
+    .intro h1 {
+      margin: 0;
+      font-family: "Archivo Black", sans-serif;
+      font-size: clamp(2.3rem, 5.4vw, 4.6rem);
+      line-height: 0.9;
+      letter-spacing: -0.07em;
+    }
+
+    .intro p {
+      margin: 12px 0 0;
+      max-width: 630px;
+      color: var(--soft-ink);
+      line-height: 1.55;
+      font-size: 0.95rem;
+    }
+
+    .small-cat {
+      width: 86px;
+      height: 86px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 18px rgba(80, 45, 10, 0.15));
+    }
+
+    .project-grid {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .project-card {
+      min-height: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 17px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .project-card:hover {
+      transform: translateY(-3px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 16px 32px rgba(80, 45, 10, 0.14);
+    }
+
+    .project-tag {
+      width: fit-content;
+      border-radius: 999px;
+      padding: 5px 10px;
+      background: var(--peach);
+      color: #83500f;
+      font-size: 0.68rem;
+      font-weight: 850;
+      letter-spacing: 0.03em;
+      margin-bottom: 9px;
+      white-space: nowrap;
+    }
+
+    .project-card h2 {
+      margin: 0 0 7px;
+      font-family: "Stack Sans Notch", sans-serif;
+      font-size: clamp(1.02rem, 1.55vw, 1.28rem);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+    }
+
+    .project-card p {
+      margin: 0;
+      color: var(--soft-ink);
+      line-height: 1.42;
+      font-size: 0.82rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .project-links a {
+      text-decoration: none;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.73rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.64);
+      transition: background 0.18s ease, color 0.18s ease;
+    }
+
+    .project-links a:hover {
+      background: var(--ink);
+      color: var(--cream);
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--soft-ink);
+      font-size: 0.78rem;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 900px) {
+      .projects-page {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .project-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: auto;
+      }
+
+      .project-card {
+        min-height: 150px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .projects-page {
+        width: min(100% - 24px, 1120px);
+        padding: 22px 0 30px;
+      }
+
+      .top-nav,
+      .intro-row {
+        display: block;
+      }
+
+      .nav-links {
+        justify-content: flex-start;
+        margin-top: 14px;
+      }
+
+      .small-cat {
+        display: none;
+      }
+
+      .intro h1 {
+        font-size: 3rem;
+      }
+
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="projects-page">
+    <nav class="top-nav">
+      <a class="brand" href="index.html">
+        <img src="images/fenfen1.png" alt="small cat logo" />
+        <span>Floyd Liu</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="about_v2.html">About</a>
+        <a href="project.html">Projects</a>
+        <a href="gallery_v2.html">Gallery</a>
+        <a href="cats.html">Cats</a>
+      </div>
+    </nav>
+
+    <section class="intro-row">
+      <div class="intro">
+        <h1>Projects</h1>
+        <p>
+          A collection of my math projects and codes. Most detailed explanations live inside the papers or slides.
+        </p>
+      </div>
+      <img src="images/fenfen2.png" alt="cat sticker" class="small-cat" />
+    </section>
+
+    <section class="project-grid">
+      <article class="project-card">
+        <div>
+          <div class="project-tag">COMBINATORICS</div>
+          <h2>Lehmer Codes</h2>
+          <p>Interactive notes on pattern avoidance, Lehmer codes, and Dyck paths.</p>
+        </div>
+        <div class="project-links">
+          <a href="https://drive.google.com/file/d/1Hi8ijvseJ4fUsw8DpvgO4dH4zGrJcyqu/view?usp=sharing">Overview</a>
+          <a href="Lehmer_2.html">Lehmer Code Calculator</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">FRACTAL GEOMETRY</div>
+          <h2>Hausdorff Dimension</h2>
+          <p>Paper and Beamer talk on Hausdorff measure and box-counting dimension.</p>
+        </div>
+        <div class="project-links">
+          <a href="https://drive.google.com/file/d/1hw4KqEB21WAQAqIuMae0kJ45JFp8BFMT/view?usp=sharing">Paper</a>
+          <a href="https://drive.google.com/file/d/1Kxm7a3ggFITBtVi0rOD6baJ1PfCxcw-y/view?usp=sharing">Slides</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">NETWORK SCIENCE</div>
+          <h2>Random-Walk Centrality</h2>
+          <p>Comparing random-walk and classical centralities in real networks.</p>
+        </div>
+        <div class="project-links">
+          <a href="https://drive.google.com/file/d/1PGnHAtwXGXeKbAKLUGU-6UDLrJUbsVhV/view?usp=sharing">Report</a>
+          <a href="https://drive.google.com/file/d/1vKsK0WRzPZbsiI_2a_LWW5MVlDhAJeiE/view?usp=sharing">Slides</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">TOPOLOGY</div>
+          <h2>Persistent Homology</h2>
+          <p>Experiments with Betti curves, filtrations, and topic evolution.</p>
+        </div>
+        <div class="project-links">
+          <a href="https://github.com/flo0o0oyd/TDA_summer_2025.git">GitHub</a>
+          <!-- <a href="#">Code</a> -->
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">TOPOLOGY</div>
+          <h2>From Hex to Fixed Points</h2>
+          <p>A combinatorial journey through Sperner’s Lemma, the Hex Theorem, Brouwer’s Fixed Point Theorem, and the Jordan Curve Theorem.</p>
+        </div>
+        <div class="project-links">
+          <a href="https://drive.google.com/file/d/1lD_JtptpwpjF7B47gm3_UZwn9we4pTHb/view?usp=sharing">Report</a>
+        </div>
+      </article>
+
+      <!-- <article class="project-card">
+        <div>
+          <div class="project-tag">VISUALIZATION</div>
+          <h2>Weather Data</h2>
+          <p>Python plots comparing recent weather data with historical averages.</p>
+        </div>
+        <div class="project-links">
+          <a href="#">Code</a>
+          <a href="#">Figures</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">WRITING / TALK</div>
+          <h2>Lie Groups Notes</h2>
+          <p>Short notes and presentation materials from advanced math coursework.</p>
+        </div>
+        <div class="project-links">
+          <a href="#">Notes</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">PERSONAL</div>
+          <h2>Cat Gallery</h2>
+          <p>Photos, small memories, and visual experiments outside of math.</p>
+        </div>
+        <div class="project-links">
+          <a href="gallery.html">Gallery</a>
+          <a href="cats.html">Cats</a>
+        </div>
+      </article>
+
+      <article class="project-card">
+        <div>
+          <div class="project-tag">ARCHIVE</div>
+          <h2>More Projects</h2>
+          <p>A place for future papers, demos, small tools, and unfinished ideas.</p>
+        </div>
+        <div class="project-links">
+          <a href="#">Coming Soon</a>
+        </div>
+      </article> -->
+    </section>
+
+    <div class="footer-note">
+      © 2026 Floyd Liu · Built with math, code, and a supervising cat.
+    </div>
+  </main>
+</body>
+</html>

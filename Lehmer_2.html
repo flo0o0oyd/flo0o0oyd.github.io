@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lehmer Code ↔ Dyck Path Demo</title>
+  <style>
+    :root{--bg:#0b1020;--panel:#121a33;--text:#e7ecff;--muted:#a7b0d6;--accent:#7aa2ff;--ok:#73e2a7;--warn:#ffcc66;--bad:#ff6b6b;}
+    *{box-sizing:border-box;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";}
+    body{margin:0;background:linear-gradient(180deg,#0b1020 0%, #070b16 60%, #060914 100%);color:var(--text);}
+
+    header{position:sticky;top:0;z-index:10;background:rgba(11,16,32,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08);}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 16px;}
+
+    h1{margin:0;font-size:18px;letter-spacing:.2px;}
+    .subtitle{color:var(--muted);font-size:13px;margin-top:6px;line-height:1.4}
+
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.10);border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.25);overflow:hidden;}
+    .card .hd{padding:14px 14px 10px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;gap:10px;align-items:center;justify-content:space-between;}
+    .card .hd .title{font-size:14px;font-weight:650;}
+    .card .bd{padding:14px;}
+
+    input[type="number"], input[type="text"], select{
+      background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.14);border-radius:12px;color:var(--text);
+      padding:9px 10px;outline:none;font-size:13px;
+    }
+    label{font-size:12px;color:var(--muted)}
+
+    .btn{padding:9px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;font-size:13px;user-select:none;}
+    .btn:hover{border-color:rgba(255,255,255,.28)}
+
+    .mono{font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+    .hint{color:var(--muted);font-size:12px;line-height:1.45}
+    .ok{color:var(--ok)}
+    .warn{color:var(--warn)}
+    .bad{color:var(--bad)}
+
+    .topRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .stepBox{padding:10px 12px;border-radius:14px;border:1px dashed rgba(255,255,255,.18);background:rgba(255,255,255,.03)}
+    .kv{display:grid;grid-template-columns: 140px 1fr;gap:8px 10px;align-items:center}
+    .kv .k{color:var(--muted);font-size:12px}
+    .kv .v{font-size:13px}
+
+    .patBtns{display:flex;gap:8px;flex-wrap:wrap}
+    .pat{padding:7px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);cursor:pointer;font-size:13px;user-select:none}
+    .pat.active{background:rgba(115,226,167,.14);border-color:rgba(115,226,167,.45)}
+
+    .grid{display:grid;grid-template-columns: 420px 1fr;gap:14px;align-items:start;margin-top:14px;}
+    @media (max-width: 980px){.grid{grid-template-columns:1fr;}}
+
+    /* tableau */
+    .tableau{display:grid;gap:6px;align-items:end;justify-content:start;grid-auto-flow:column;}
+    .tableauHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 8px}
+    .tableauHead:first-child{margin-top:0}
+    .mirrorBtn{padding:6px 9px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);color:var(--text);cursor:pointer;font-size:12px}
+    .mirrorBtn:hover{border-color:rgba(255,255,255,.28)}
+    .col{display:flex;flex-direction:column;gap:4px;align-items:center}
+    .cell{width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.05)}
+    .cell.filled{background: rgba(122,162,255,.35);border-color: rgba(122,162,255,.55);}
+    .colLabel{font-size:11px;color:var(--muted)}
+
+    /* path */
+    .canvasBox{background:rgba(0,0,0,.20);border:1px solid rgba(255,255,255,.12);border-radius:16px;overflow:hidden}
+    svg{display:block;width:100%;height:520px}
+    @media (max-width: 980px){svg{height:440px}}
+
+    .legend{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .dot2{width:10px;height:10px;border-radius:999px;background:rgba(115,226,167,.9);display:inline-block;margin-right:6px}
+    .dot3{width:10px;height:10px;border-radius:999px;background:rgba(255,204,102,.9);display:inline-block;margin-right:6px}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Lehmer code ↔ Dyck path (interactive scaffold)</h1>
+    <div class="subtitle">
+      Enter either a <b>permutation</b> or a <b>Lehmer code (0-index)</b>; the other updates automatically. The left panel shows a fixed staircase frame (heights n−1, n−2, …) filled by the global Lehmer code. The right panel draws a Dyck-like path <b>only after you select an avoiding pattern</b>.
+    </div>
+
+    <div class="card" style="padding:12px;border-radius:16px;margin-top:12px;">
+      <div class="topRow">
+        <label>n</label>
+        <input id="nInput" type="number" min="1" max="30" value="6" style="width:90px" />
+        <button class="btn" id="resetBtn">Reset</button>
+        <span class="hint">Changing n clears inputs and recomputes validity.</span>
+      </div>
+
+      <div class="topRow" style="margin-top:10px">
+        <label>Permutation</label>
+        <input id="permBox" type="text" class="mono" style="flex:1" placeholder="e.g. 3 1 4 2" />
+        <label>Lehmer code (0-index)</label>
+        <input id="codeBox" type="text" class="mono" style="flex:1" placeholder="e.g. 2 0 1 0" />
+      </div>
+
+      <div class="topRow" style="margin-top:10px;align-items:flex-start">
+        <div class="stepBox" style="flex:1">
+          <div class="kv">
+            <div class="k">Input status</div>
+            <div class="v" id="topStatus">Waiting…</div>
+            <div class="k">Global perm</div>
+            <div class="v mono" id="permOut">[]</div>
+            <div class="k">Global Lehmer</div>
+            <div class="v mono" id="lehmerOut">[]</div>
+            <div class="k">Reverse perm</div>
+            <div class="v mono" id="revPermOut">[]</div>
+            <div class="k">Reverse Lehmer</div>
+            <div class="v mono" id="revLehmerOut">[]</div>
+            <div class="k">Complement perm</div>
+            <div class="v mono" id="compPermOut">[]</div>
+            <div class="k">Complement Lehmer</div>
+            <div class="v mono" id="compLehmerOut">[]</div>
+            <div class="k">Complement reverse perm</div>
+            <div class="v mono" id="compRevPermOut">[]</div>
+            <div class="k">Complement reverse Lehmer</div>
+            <div class="v mono" id="compRevLehmerOut">[]</div>
+          </div>
+        </div>
+
+        <div class="stepBox" style="flex:1">
+          <div class="kv">
+            <div class="k">Pattern test</div>
+            <div class="v" id="avoidStatus">—</div>
+          </div>
+          <div class="hint" style="margin-top:8px">
+            Pick one pattern below. The path panel will focus on that avoiding class.
+          </div>
+          <div class="patBtns" style="margin-top:8px">
+            <div class="pat active" data-pat="none">None</div>
+            <div class="pat" data-pat="123">123-avoiding</div>
+            <div class="pat" data-pat="132">132-avoiding</div>
+            <div class="pat" data-pat="213">213-avoiding</div>
+            <div class="pat" data-pat="231">231-avoiding</div>
+            <div class="pat" data-pat="312">312-avoiding</div>
+            <div class="pat" data-pat="321">321-avoiding</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+
+    <!-- LEFT: tableau auto -->
+    <div class="card">
+      <div class="hd">
+        <div class="title">Tableau (staircase frame)</div>
+        <div class="hint">auto-updates from global Lehmer code</div>
+      </div>
+      <div class="bd">
+        <div class="tableauHead">
+          <div class="hint"><b>Original permutation tableau</b></div>
+          <button class="mirrorBtn" data-tableau="tableauArea">Mirror: left high → left low</button>
+        </div>
+        <div id="tableauArea" class="hint">(Enter a valid permutation or Lehmer code above.)</div>
+
+        <div class="tableauHead">
+          <div class="hint"><b>Reverse permutation tableau</b></div>
+          <button class="mirrorBtn" data-tableau="reverseTableauArea">Mirror: left high → left low</button>
+        </div>
+        <div id="reverseTableauArea" class="hint">(Enter a valid permutation or Lehmer code above.)</div>
+
+        <div class="tableauHead">
+          <div class="hint"><b>Complement permutation tableau</b></div>
+          <button class="mirrorBtn" data-tableau="complementTableauArea">Mirror: left high → left low</button>
+        </div>
+        <div id="complementTableauArea" class="hint">(Enter a valid permutation or Lehmer code above.)</div>
+
+        <div class="tableauHead">
+          <div class="hint"><b>Complement reverse permutation tableau</b></div>
+          <button class="mirrorBtn" data-tableau="complementReverseTableauArea">Mirror: left high → left low</button>
+        </div>
+        <div id="complementReverseTableauArea" class="hint">(Enter a valid permutation or Lehmer code above.)</div>
+
+        <div class="hint" style="margin-top:10px">
+          Frame: column 1 has height n−1, column 2 has height n−2, … (total n−1 columns). Fill rule: in column i, fill <span class="mono">code[i]</span> cells from the bottom. The mirror button only reverses the displayed columns; it does not change the underlying code.
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: dyck path -->
+    <div class="card">
+      <div class="hd">
+        <div class="title">Dyck path view</div>
+        <div class="legend">
+          <span><span class="dot2"></span>path</span>
+          <span><span class="dot3"></span>baseline</span>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="topRow">
+          <label>Style</label>
+          <select id="pathStyle">
+            <option value="diag" selected>baseline y=x, steps N/E</option>
+            <option value="flat">baseline y=0, steps NE/SE</option>
+          </select>
+          <label>Grid</label>
+          <select id="gridMode">
+            <option value="on" selected>on</option>
+            <option value="off">off</option>
+          </select>
+          <button class="btn" id="drawPathBtn">Redraw</button>
+        </div>
+
+        <div class="stepBox" style="margin-top:10px">
+          <div class="kv">
+            <div class="k">Current pattern</div>
+            <div class="v mono" id="patNow">none</div>
+            <div class="k">Status</div>
+            <div class="v" id="pathCheck">Select a pattern to draw.</div>
+          </div>
+        </div>
+
+        <div class="canvasBox" style="margin-top:10px">
+          <svg id="svg" viewBox="0 0 900 520" preserveAspectRatio="xMidYMid meet"></svg>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          Note: <span class="mono">buildPathFromCode()</span> is still a scaffold. You will replace it with your true bijection for each avoiding class.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = (id)=>document.getElementById(id);
+  const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+  const parseSeq = (s)=>{
+    if(!s) return [];
+    return s.replace(/[\[\]\(\)]/g,' ')
+      .split(/[^0-9-]+/)
+      .filter(Boolean)
+      .map(Number);
+  };
+  const fmtArr = (arr)=>'['+arr.join(', ')+']';
+
+  // global state
+  let n = 6;
+  let perm = [];
+  let code = [];
+  let reversePerm = [];
+  let reverseCode = [];
+  let complementPerm = [];
+  let complementCode = [];
+  let complementReversePerm = [];
+  let complementReverseCode = [];
+  let selectedPattern = 'none';
+
+  const tableauMirror = {
+    tableauArea: false,
+    reverseTableauArea: false,
+    complementTableauArea: false,
+    complementReverseTableauArea: false
+  };
+
+  // sync guards
+  let syncingFromPerm = false;
+  let syncingFromCode = false;
+
+  // ---- Lehmer utilities ----
+  function validatePermutation(p, n){
+    if(p.length !== n) return {ok:false, msg:`Permutation length must be n=${n} (got ${p.length}).`};
+    const seen = new Set(p);
+    if(seen.size !== n) return {ok:false, msg:`Permutation has duplicates.`};
+    for(const x of p){
+      if(!Number.isInteger(x) || x<1 || x>n) return {ok:false, msg:`Permutation must be a rearrangement of 1..n (found ${x}).`};
+    }
+    return {ok:true, msg:'OK'};
+  }
+
+  function permToLehmer(p){
+    const n = p.length;
+    const leh = [];
+    for(let i=0;i<n;i++){
+      let cnt = 0;
+      for(let j=i+1;j<n;j++) if(p[j] < p[i]) cnt++;
+      leh.push(cnt);
+    }
+    return leh;
+  }
+
+  function complementOfPerm(p){
+    return p.map(x => n + 1 - x);
+  }
+
+  function updateTransformsFromPerm(){
+    if(perm.length !== n){
+      reversePerm = [];
+      reverseCode = [];
+      complementPerm = [];
+      complementCode = [];
+      complementReversePerm = [];
+      complementReverseCode = [];
+    } else {
+      reversePerm = perm.slice().reverse();
+      reverseCode = permToLehmer(reversePerm);
+
+      complementPerm = complementOfPerm(perm);
+      complementCode = permToLehmer(complementPerm);
+
+      complementReversePerm = complementPerm.slice().reverse();
+      complementReverseCode = permToLehmer(complementReversePerm);
+    }
+
+    $('revPermOut').textContent = fmtArr(reversePerm);
+    $('revLehmerOut').textContent = fmtArr(reverseCode);
+    $('compPermOut').textContent = fmtArr(complementPerm);
+    $('compLehmerOut').textContent = fmtArr(complementCode);
+    $('compRevPermOut').textContent = fmtArr(complementReversePerm);
+    $('compRevLehmerOut').textContent = fmtArr(complementReverseCode);
+  }
+
+  function validateLehmer(c, n){
+    if(c.length !== n) return {ok:false, msg:`Lehmer code length must be n=${n} (got ${c.length}).`};
+    for(let i=0;i<n;i++){
+      const max = n-1-i;
+      const v = c[i];
+      if(!Number.isInteger(v)) return {ok:false, msg:`Lehmer code must be integers (position ${i+1}).`};
+      if(v < 0 || v > max) return {ok:false, msg:`Lehmer code position ${i+1} must be in [0, ${max}] (got ${v}).`};
+    }
+    return {ok:true, msg:'OK'};
+  }
+
+  function lehmerToPermutation(c){
+    const n = c.length;
+    let rem = Array.from({length:n}, (_,i)=>i+1);
+    const p = [];
+    for(let i=0;i<n;i++){
+      const idx = c[i];
+      p.push(rem[idx]);
+      rem.splice(idx,1);
+    }
+    return p;
+  }
+
+  // ---- pattern avoidance (length 3) ----
+  function rank3(a,b,c){
+    const arr = [{v:a,id:1},{v:b,id:2},{v:c,id:3}].sort((x,y)=>x.v-y.v);
+    const pos = new Map();
+    arr.forEach((o,i)=>pos.set(o.id,i+1));
+    return ''+pos.get(1)+pos.get(2)+pos.get(3);
+  }
+
+  function avoidsPattern(p, pat){
+    if(pat==='none') return {ok:true, witness:null};
+    const n = p.length;
+    for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) for(let k=j+1;k<n;k++){
+      const r = rank3(p[i], p[j], p[k]);
+      if(r === pat) return {ok:false, witness:[i+1,j+1,k+1]};
+    }
+    return {ok:true, witness:null};
+  }
+
+  // ---- top sync ----
+  function setGlobalFromPerm(p){
+    const v = validatePermutation(p, n);
+    if(!v.ok){
+      $('topStatus').innerHTML = `<span class="bad">invalid</span>: ${v.msg}`;
+      $('permOut').textContent = fmtArr(p);
+      $('lehmerOut').textContent = '[]';
+      perm = [];
+      code = [];
+      updateTransformsFromPerm();
+      refreshAvoidStatus();
+      refreshViews();
+      return;
+    }
+    perm = p.slice();
+    code = permToLehmer(perm);
+    $('permOut').textContent = fmtArr(perm);
+    $('lehmerOut').textContent = fmtArr(code);
+    updateTransformsFromPerm();
+
+    syncingFromPerm = true;
+    $('codeBox').value = code.join(' ');
+    syncingFromPerm = false;
+
+    $('topStatus').innerHTML = `<span class="ok">valid</span>: computed Lehmer code from permutation.`;
+    refreshAvoidStatus();
+    refreshViews();
+  }
+
+  function setGlobalFromCode(c){
+    const v = validateLehmer(c, n);
+    if(!v.ok){
+      $('topStatus').innerHTML = `<span class="bad">invalid</span>: ${v.msg}`;
+      $('lehmerOut').textContent = fmtArr(c);
+      $('permOut').textContent = '[]';
+      perm = [];
+      code = [];
+      updateTransformsFromPerm();
+      refreshAvoidStatus();
+      refreshViews();
+      return;
+    }
+    code = c.slice();
+    perm = lehmerToPermutation(code);
+    $('permOut').textContent = fmtArr(perm);
+    $('lehmerOut').textContent = fmtArr(code);
+    updateTransformsFromPerm();
+
+    syncingFromCode = true;
+    $('permBox').value = perm.join(' ');
+    syncingFromCode = false;
+
+    $('topStatus').innerHTML = `<span class="ok">valid</span>: computed permutation from Lehmer code.`;
+    refreshAvoidStatus();
+    refreshViews();
+  }
+
+  function refreshAvoidStatus(){
+    $('patNow').textContent = selectedPattern;
+
+    if(perm.length !== n){
+      $('avoidStatus').innerHTML = '—';
+      return;
+    }
+
+    if(selectedPattern==='none'){
+      $('avoidStatus').innerHTML = 'No pattern selected.';
+      return;
+    }
+
+    const res = avoidsPattern(perm, selectedPattern);
+    if(res.ok){
+      $('avoidStatus').innerHTML = `<span class="ok">✅ avoids ${selectedPattern}</span>`;
+    } else {
+      $('avoidStatus').innerHTML = `<span class="bad">❌ contains ${selectedPattern}</span> (witness indices: <span class="mono">${res.witness.join(', ')}</span>)`;
+    }
+  }
+
+  // ---- Tableau ----
+  function renderSingleTableau(areaId, c){
+    const area = $(areaId);
+    if(c.length !== n){
+      area.innerHTML = '<div class="hint">(Enter a valid permutation or Lehmer code above.)</div>';
+      return;
+    }
+    const v = validateLehmer(c, n);
+    if(!v.ok){
+      area.innerHTML = `<div class="hint"><span class="bad">invalid</span>: ${v.msg}</div>`;
+      return;
+    }
+
+    const wrap = document.createElement('div');
+    wrap.className = 'tableau';
+
+    const indices = Array.from({length:n-1}, (_,i)=>i);
+    if(tableauMirror[areaId]) indices.reverse();
+
+    for(const i of indices){
+      const H = n-1-i;
+      const fill = clamp(c[i], 0, H);
+      const col = document.createElement('div');
+      col.className = 'col';
+      for(let k=0;k<H;k++){
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (k >= (H - fill) ? ' filled' : '');
+        col.appendChild(cell);
+      }
+      const lab = document.createElement('div');
+      lab.className = 'colLabel mono';
+      lab.textContent = `${i+1}`;
+      col.appendChild(lab);
+      wrap.appendChild(col);
+    }
+
+    area.innerHTML='';
+    area.appendChild(wrap);
+  }
+
+  function renderTableau(){
+    renderSingleTableau('tableauArea', code);
+    renderSingleTableau('reverseTableauArea', reverseCode);
+    renderSingleTableau('complementTableauArea', complementCode);
+    renderSingleTableau('complementReverseTableauArea', complementReverseCode);
+
+    document.querySelectorAll('.mirrorBtn').forEach(btn => {
+      const id = btn.dataset.tableau;
+      btn.textContent = tableauMirror[id] ? 'Mirror: left low → left high' : 'Mirror: left high → left low';
+    });
+  }
+
+  // ---- SVG primitives ----
+  const svg = $('svg');
+  function clearSVG(){ svg.innerHTML=''; }
+
+  function line(x1,y1,x2,y2, opts={}){
+    const el = document.createElementNS('http://www.w3.org/2000/svg','line');
+    el.setAttribute('x1',x1); el.setAttribute('y1',y1);
+    el.setAttribute('x2',x2); el.setAttribute('y2',y2);
+    el.setAttribute('stroke', opts.stroke || 'rgba(255,255,255,.25)');
+    el.setAttribute('stroke-width', opts.w || 2);
+    if(opts.dash) el.setAttribute('stroke-dasharray', opts.dash);
+    svg.appendChild(el);
+    return el;
+  }
+  function circle(cx,cy,r, opts={}){
+    const el = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    el.setAttribute('cx',cx); el.setAttribute('cy',cy); el.setAttribute('r',r);
+    el.setAttribute('fill', opts.fill || 'rgba(115,226,167,.9)');
+    el.setAttribute('stroke', opts.stroke || 'rgba(0,0,0,.35)');
+    el.setAttribute('stroke-width', opts.w || 1);
+    svg.appendChild(el);
+    return el;
+  }
+  function text(x,y, str, opts={}){
+    const el = document.createElementNS('http://www.w3.org/2000/svg','text');
+    el.setAttribute('x',x); el.setAttribute('y',y);
+    el.setAttribute('fill', opts.fill || 'rgba(231,236,255,.85)');
+    el.setAttribute('font-size', opts.size || 12);
+    el.setAttribute('font-family', opts.mono ? 'ui-monospace, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace' : 'inherit');
+    el.textContent = str;
+    svg.appendChild(el);
+    return el;
+  }
+  function polyline(points, opts={}){
+    const el = document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    el.setAttribute('points', points.map(p=>p.join(',')).join(' '));
+    el.setAttribute('fill','none');
+    el.setAttribute('stroke', opts.stroke || 'rgba(115,226,167,.92)');
+    el.setAttribute('stroke-width', opts.w || 3);
+    el.setAttribute('stroke-linejoin','round');
+    el.setAttribute('stroke-linecap','round');
+    svg.appendChild(el);
+    return el;
+  }
+
+  // ---- Path drawing ----
+  function drawPath(){
+    clearSVG();
+
+    $('patNow').textContent = selectedPattern;
+
+    if(selectedPattern === 'none'){
+      $('pathCheck').innerHTML = 'Select a pattern to draw.';
+      return;
+    }
+
+    if(code.length !== n){
+      $('pathCheck').innerHTML = `<span class="bad">invalid</span>: enter a valid input first.`;
+      return;
+    }
+
+    const v = validateLehmer(code, n);
+    if(!v.ok){
+      $('pathCheck').innerHTML = `<span class="bad">invalid</span>: ${v.msg}`;
+      return;
+    }
+
+    const patRes = avoidsPattern(perm, selectedPattern);
+    if(!patRes.ok){
+      $('pathCheck').innerHTML = `<span class="bad">pattern mismatch</span>: contains ${selectedPattern} (witness ${patRes.witness.join(', ')}).`;
+      return;
+    }
+
+    $('pathCheck').innerHTML = `<span class="ok">ready</span>: avoids ${selectedPattern}.`;
+
+    const style = $('pathStyle').value;
+    const showGrid = $('gridMode').value === 'on';
+
+    const W=900,H=520,pad=40;
+    const left=pad, top=pad, right=W-pad, bottom=H-pad;
+    const gridSize = Math.min(right-left, bottom-top);
+    const ox = left + 20;
+    const oy = bottom - 10;
+    const unit = gridSize / (n+1);
+
+    if(showGrid){
+      for(let i=0;i<=n;i++){
+        line(ox + i*unit, oy, ox + i*unit, oy - n*unit, {stroke:'rgba(255,255,255,.08)', w:1});
+        line(ox, oy - i*unit, ox + n*unit, oy - i*unit, {stroke:'rgba(255,255,255,.08)', w:1});
+      }
+    }
+
+    if(style==='diag'){
+      line(ox, oy, ox + n*unit, oy - n*unit, {stroke:'rgba(255,204,102,.7)', w:3, dash:'8 6'});
+      text(ox + n*unit - 46, oy - n*unit + 18, 'y=x', {size:12, fill:'rgba(255,204,102,.9)', mono:true});
+    } else {
+      line(ox, oy, ox + n*unit, oy, {stroke:'rgba(255,204,102,.7)', w:3, dash:'8 6'});
+      text(ox + n*unit - 54, oy - 10, 'y=0', {size:12, fill:'rgba(255,204,102,.9)', mono:true});
+    }
+
+    // Hook: per-pattern bijection (implement as you add them)
+    const points = buildPathByPattern(perm, code, style, selectedPattern);
+
+    const pts = points.map(([x,y])=>[ox + x*unit, oy - y*unit]);
+    polyline(pts, {stroke:'rgba(115,226,167,.92)', w:4});
+    pts.forEach((p, i)=>{ if(i===0 || i===pts.length-1 || i%2===0) circle(p[0], p[1], 4); });
+
+    text(left, 26, `n=${n}  pattern=${selectedPattern}  perm=${fmtArr(perm)}`, {size:12, mono:true});
+  }
+
+  // ---- scaffold path builder (replace later) ----
+  function buildPathByPattern(perm, code, style, pattern){
+    // Add more patterns as you implement them.
+    if(pattern === '231'){
+      return buildPath_231_fromLehmerLast(code, style);
+    }
+    if(pattern === '123'){
+      return buildPath_123_viaLookup(code, style);
+    }
+    if(pattern === '132'){
+      return buildPath_132_fromBetaLast(code, style);
+    }
+    if(pattern === '312'){
+      return buildPath_312_fromEpsilonLast(code, style);
+    }
+    if(pattern === '213'){
+      return buildPath_213_fromGammaLast(code, style);
+    }
+    if(pattern === '321'){
+      return buildPath_321_viaLookup(code, style);
+    }
+    // fallback scaffold for other patterns
+    return buildPath_generic(code, style);
+  }
+
+  // ------------------ 123-avoiding bijection (via dw_alpha_last lookup) ------------------
+  // Your Sage/Python dw_alpha_last maps: Dyck word -> Lehmer code for the 123-avoiding class.
+  // Its inverse is nontrivial because alpha_one/two are not obviously invertible.
+  // For a demo, we build a lookup table at runtime for the current n:
+  //   DyckWords(n) --dw_alpha_last--> code
+  // Then invert by dictionary lookup: code -> Dyck word.
+  // This is practical only for moderate n (Catalan numbers grow fast).
+
+  const alphaLookupCache = new Map(); // n -> Map(codeKey -> dyckWord)
+  const zetaLookupCache  = new Map(); // n -> Map(codeKey -> dyckWord)
+  const LOOKUP_MAX_N = 11;           // keep the UI responsive for lookup-based inverses            // keep the UI responsive      // keep the UI responsive
+
+  function lastPrimitiveDecomp(dw){
+    // dw is a balanced parentheses string.
+    // Return [decomp1, decomp2] such that dw = decomp1 + '(' + decomp2 + ')',
+    // where '('+decomp2+')' is the LAST primitive component.
+    // Implementation: find the last position where prefix balance is 0 (before the end).
+    let bal = 0;
+    let lastZero = -1;
+    for(let i=0;i<dw.length;i++){
+      bal += (dw[i] === '(' ? 1 : -1);
+      if(bal === 0 && i < dw.length-1) lastZero = i;
+    }
+    const decomp1 = (lastZero >= 0) ? dw.slice(0, lastZero+1) : '';
+    const prim = dw.slice(lastZero+1); // last primitive component
+    const decomp2 = prim.length >= 2 ? prim.slice(1, -1) : '';
+    return [decomp1, decomp2];
+  }
+
+  function isFlush(c){
+    const n = c.length;
+    for(let i=0;i<n-1;i++){
+      const val = c[i];
+      if(val === n - i - 1){
+        let ok = true;
+        for(let j=0;j<i;j++) if(c[j] < val) { ok = false; break; }
+        if(ok) return true;
+      }
+    }
+    return false;
+  }
+
+  function insertMaxNonflushDigit(p){
+    const n = p.length + 1;
+    for(let x = n-2; x >= 0; x--){
+      const newCode = [p[0], x, ...p.slice(1)];
+      if(!isFlush(newCode)) return newCode;
+    }
+    return null;
+  }
+
+  function rearrangeNonflushDescending(p){
+    const n = p.length;
+    const fixed = new Set();
+    for(let i=0;i<n;i++) if(p[i] === n - i - 1) fixed.add(i);
+    const toSort = [];
+    for(let i=0;i<n;i++) if(!fixed.has(i)) toSort.push(p[i]);
+    toSort.sort((a,b)=>b-a);
+    const out = [];
+    let j = 0;
+    for(let i=0;i<n;i++){
+      if(fixed.has(i)) out.push(p[i]);
+      else out.push(toSort[j++]);
+    }
+    return out;
+  }
+
+  function alphaOne(code){
+    return insertMaxNonflushDigit(code);
+  }
+
+  function alphaTwo(code){
+    return rearrangeNonflushDescending(code);
+  }
+
+  function dw_alpha_last(dw){
+    const length = dw.length;
+    if(length === 2) return [0];
+
+    const [decomp1, decomp2] = lastPrimitiveDecomp(dw);
+    const length2 = decomp2.length;
+    const size2 = Math.floor(length2/2);
+
+    let code2;
+    if(length2 === 0){
+      code2 = [0];
+    } else {
+      code2 = dw_alpha_last(decomp2);
+      code2 = alphaOne(code2);
+      code2 = alphaTwo(code2);
+    }
+
+    let code;
+    if(decomp1.length === 0){
+      code = code2;
+    } else {
+      let code1 = dw_alpha_last(decomp1);
+      code1 = code1.map(x => x + size2 + 1);
+      code = [...code1, ...code2];
+    }
+    return code;
+  }
+
+  function generateDyckWords(n){
+    const out = [];
+    function rec(open, close, s){
+      if(open === n && close === n){ out.push(s); return; }
+      if(open < n) rec(open+1, close, s+'(');
+      if(close < open) rec(open, close+1, s+')');
+    }
+    rec(0,0,'');
+    return out;
+  }
+
+  function buildAlphaLookup(n){
+    if(alphaLookupCache.has(n)) return alphaLookupCache.get(n);
+    const map = new Map();
+    const dws = generateDyckWords(n);
+    for(const dw of dws){
+      const c = dw_alpha_last(dw);
+      const key = c.join(',');
+      if(!map.has(key)) map.set(key, dw);
+    }
+    alphaLookupCache.set(n, map);
+    return map;
+  }
+
+  function buildPath_123_viaLookup(code, style){
+    const n = code.length;
+    if(n > LOOKUP_MAX_N){
+      return [[0,0]];
+    }
+    const lookup = buildAlphaLookup(n);
+    const key = code.join(',');
+    const dw = lookup.get(key);
+    if(!dw) return [[0,0]];
+
+    if(style === 'flat'){
+      let x=0, y=0;
+      const pts=[[x,y]];
+      for(const ch of dw){
+        if(ch==='('){ x+=1; y+=1; }
+        else { x+=1; y-=1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+
+    let x=0, y=0;
+    const pts=[[x,y]];
+    for(const ch of dw){
+      if(ch==='(') y+=1;
+      else x+=1;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ 132-avoiding bijection (via dw_beta_last inverse) ------------------
+  // Your dw_beta_last maps: Dyck word -> Lehmer code using last primitive decomposition.
+  // This recursion is invertible in the same style as dw_delta_last.
+
+  function splitIndexBetaLast(code){
+    // For beta_last: if code2 = [size2] + innerCode, then size2 = innerCode.length.
+    // If code = code1 + code2, and |code2| = size2+1, then at the split t we have: code[t] + 1 = |code2| = s - t
+    const s = code.length;
+    for(let t=0;t<s;t++){
+      if(code[t] + 1 === s - t) return t;
+    }
+    return -1;
+  }
+
+  function dyckFromBetaLast(code){
+    const s = code.length;
+    if(s === 1) return '()';
+
+    const t = splitIndexBetaLast(code);
+    if(t < 0){
+      return '()'.repeat(s);
+    }
+
+    const code1 = code.slice(0, t);
+    const code2 = code.slice(t);
+
+    const size2 = code2[0];
+    const innerCode = code2.slice(1);
+
+    // In forward map, code1 was shifted by +size2. Undo it here.
+    const prefixCode = code1.map(x => x - size2);
+
+    const prefix = (prefixCode.length === 0) ? '' : dyckFromBetaLast(prefixCode);
+    const inner  = (size2 === 0) ? '' : dyckFromBetaLast(innerCode);
+
+    return prefix + '(' + inner + ')';
+  }
+
+  function buildPath_132_fromBetaLast(code, style){
+    const dw = dyckFromBetaLast(code);
+    if(style === 'flat'){
+      let x=0,y=0;
+      const pts=[[x,y]];
+      for(const ch of dw){
+        if(ch==='('){ x+=1; y+=1; }
+        else { x+=1; y-=1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+    let x=0,y=0;
+    const pts=[[x,y]];
+    for(const ch of dw){
+      if(ch==='(') y+=1;
+      else x+=1;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ 312-avoiding bijection (via dw_epsilon_last inverse) ------------------
+  // Forward dw_epsilon_last:
+  //   decomp2 empty -> [0]
+  //   else code2 = dw_epsilon_last(decomp2); code2 = (code2+1) + [0]
+  //   code = code1 + code2
+  // Inverse idea: split code = code1 + code2 where code2 ends with 0 and all previous entries are >=1.
+  // Then innerCode = (code2 without last 0) - 1.
+
+  function splitIndexEpsilonLast(code){
+    const s = code.length;
+    // Find the start t of the last block code2.
+    // code2 is either [0] (length 1), or [a1>=1, a2>=1, ..., ak>=1, 0] (length k+1).
+    // We want the longest suffix matching that shape.
+    // Strategy: determine suffix length L by scanning from end:
+    // last must be 0. Then go left while entries >= 1. That suffix is code2.
+    if(s === 0) return -1;
+    if(code[s-1] !== 0) return -1;
+    let t = s-1;
+    while(t-1 >= 0 && code[t-1] >= 1){
+      t -= 1;
+    }
+    return t; // code2 starts at t
+  }
+
+  function dyckFromEpsilonLast(code){
+    const s = code.length;
+    if(s === 1) return '()';
+
+    const t = splitIndexEpsilonLast(code);
+    if(t < 0){
+      return '()'.repeat(s);
+    }
+
+    const code1 = code.slice(0, t);
+    const code2 = code.slice(t);
+
+    let innerCode = [];
+    if(code2.length === 1){
+      // code2 = [0] means inner is empty
+      innerCode = [];
+    } else {
+      innerCode = code2.slice(0, -1).map(x => x - 1); // undo +1
+    }
+
+    const prefix = (code1.length === 0) ? '' : dyckFromEpsilonLast(code1);
+    const inner  = (innerCode.length === 0) ? '' : dyckFromEpsilonLast(innerCode);
+
+    return prefix + '(' + inner + ')';
+  }
+
+  function buildPath_312_fromEpsilonLast(code, style){
+    const dw = dyckFromEpsilonLast(code);
+    if(style === 'flat'){
+      let x=0,y=0;
+      const pts=[[x,y]];
+      for(const ch of dw){
+        if(ch==='('){ x+=1; y+=1; }
+        else { x+=1; y-=1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+    let x=0,y=0;
+    const pts=[[x,y]];
+    for(const ch of dw){
+      if(ch==='(') y+=1;
+      else x+=1;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ 213-avoiding bijection (via dw_gamma_last inverse) ------------------
+  // Forward dw_gamma_last:
+  //   decomp2 empty -> [0]
+  //   else code2 = [0] + dw_gamma_last(decomp2)
+  //   if decomp1 nonempty: code1 shifted by +(size2+1)
+  //   code = code1 + code2
+  // Inverse: locate split where code2 begins. In forward, code2 always begins with 0.
+  // For valid images, the split t is the first index from the right such that code[t] = 0 and code[t] <= (s-1-t).
+
+  function splitIndexGammaLast(code){
+    const s = code.length;
+    // Find last occurrence of 0 that can serve as the start of code2.
+    // Prefer the rightmost such split to match "last primitive" semantics.
+    for(let t=s-1;t>=0;t--){
+      if(code[t] !== 0) continue;
+      // if t is split, then code2 has length L = s-t, and innerCode length is L-1.
+      // We need innerCode length = size2, and in forward size2 = |decomp2|/2.
+      // Here we can at least ensure feasibility: innerCode length = s-t-1 >= 0.
+      if(s - t - 1 >= 0) return t;
+    }
+    return -1;
+  }
+
+  function dyckFromGammaLast(code){
+    const s = code.length;
+    if(s === 1) return '()';
+
+    const t = splitIndexGammaLast(code);
+    if(t < 0){
+      return '()'.repeat(s);
+    }
+
+    const code1 = code.slice(0, t);
+    const code2 = code.slice(t);
+
+    // code2 = [0] + innerCode
+    const innerCode = code2.slice(1);
+    const size2 = innerCode.length;
+
+    // Undo the shift in code1: x -> x + (size2+1)
+    const prefixCode = code1.map(x => x - (size2 + 1));
+
+    const prefix = (prefixCode.length === 0) ? '' : dyckFromGammaLast(prefixCode);
+    const inner  = (innerCode.length === 0) ? '' : dyckFromGammaLast(innerCode);
+
+    return prefix + '(' + inner + ')';
+  }
+
+  function buildPath_213_fromGammaLast(code, style){
+    const dw = dyckFromGammaLast(code);
+    if(style === 'flat'){
+      let x=0,y=0;
+      const pts=[[x,y]];
+      for(const ch of dw){
+        if(ch==='('){ x+=1; y+=1; }
+        else { x+=1; y-=1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+    let x=0,y=0;
+    const pts=[[x,y]];
+    for(const ch of dw){
+      if(ch==='(') y+=1;
+      else x+=1;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ 321-avoiding bijection (via dw_zeta_last lookup) ------------------
+  // Your Sage/Python dw_zeta_last maps: Dyck word -> Lehmer code for the 321-avoiding class.
+  // Inverse is implemented here by lookup (enumerate DyckWords(n), compute code, invert dictionary).
+
+  function dw_zeta_last(dw){
+    const length = dw.length;
+    if(length === 2) return [0];
+
+    const [decomp1, decomp2] = lastPrimitiveDecomp(dw);
+    const length2 = decomp2.length;
+
+    let code2;
+    if(length2 === 0){
+      code2 = [0];
+    } else {
+      code2 = dw_zeta_last(decomp2);
+      code2 = [1, ...code2];
+    }
+
+    let code;
+    if(decomp1.length === 0){
+      code = code2;
+    } else {
+      let code1 = dw_zeta_last(decomp1);
+      code1 = code1.map(v => (v > 0 ? v + 1 : v));
+      code = [...code1, ...code2];
+    }
+    return code;
+  }
+
+  function buildZetaLookup(n){
+    if(zetaLookupCache.has(n)) return zetaLookupCache.get(n);
+    const map = new Map();
+    const dws = generateDyckWords(n);
+    for(const dw of dws){
+      const c = dw_zeta_last(dw);
+      const key = c.join(',');
+      if(!map.has(key)) map.set(key, dw);
+    }
+    zetaLookupCache.set(n, map);
+    return map;
+  }
+
+  function buildPath_321_viaLookup(code, style){
+    const n = code.length;
+    if(n > LOOKUP_MAX_N){
+      return [[0,0]];
+    }
+    const lookup = buildZetaLookup(n);
+    const key = code.join(',');
+    const dw = lookup.get(key);
+    if(!dw) return [[0,0]];
+
+    if(style === 'flat'){
+      let x=0, y=0;
+      const pts=[[x,y]];
+      for(const ch of dw){
+        if(ch==='('){ x+=1; y+=1; }
+        else { x+=1; y-=1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+
+    let x=0, y=0;
+    const pts=[[x,y]];
+    for(const ch of dw){
+      if(ch==='(') y+=1;
+      else x+=1;
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ 231-avoiding bijection (via dw_delta_last inverse) ------------------
+  // Your Python dw_delta_last maps: Dyck word -> Lehmer code.
+  // To draw a Dyck path from an input Lehmer code (for the 231-avoiding class),
+  // we invert that recursion to reconstruct the Dyck word, then convert to path points.
+
+  // Find t such that code = code1 + code2 and code2 corresponds to the last primitive component.
+  // In dw_delta_last, code2 begins with size2, and the decomposition implies: t + code[t] = len(code)-1.
+  function splitIndexLastPrimitive(code){
+    const s = code.length;
+    for(let t=0;t<s;t++){
+      if(t + code[t] === s-1) return t;
+    }
+    return -1; // should not happen for valid codes in this image
+  }
+
+  // Inverse of dw_delta_last: Lehmer code -> Dyck word as a parentheses string.
+  // Base: [0] <-> "()"
+  function dyckFromLehmerLast(code){
+    const s = code.length;
+    if(s === 1) return '()';
+
+    const t = splitIndexLastPrimitive(code);
+    if(t < 0) {
+      // fallback: return a simple balanced word so the UI doesn't crash
+      return '()'.repeat(s);
+    }
+
+    const code1 = code.slice(0, t);
+    const code2 = code.slice(t);
+
+    // code2[0] is size2 = semilength(inner) = (semilength(primitive) - 1)
+    const innerSize = code2[0];
+    const innerCode = code2.slice(1); // length should be innerSize
+
+    const prefix = (code1.length === 0) ? '' : dyckFromLehmerLast(code1);
+    const inner = (innerSize === 0) ? '' : dyckFromLehmerLast(innerCode);
+
+    return prefix + '(' + inner + ')';
+  }
+
+  function buildPath_231_fromLehmerLast(code, style){
+    const dw = dyckFromLehmerLast(code);
+    // dw has length 2n, with '(' and ')'
+
+    if(style === 'flat'){
+      // NE/SE mountain style
+      let x = 0, y = 0;
+      const pts = [[x,y]];
+      for(const ch of dw){
+        if(ch === '('){ x += 1; y += 1; }
+        else { x += 1; y -= 1; }
+        pts.push([x,y]);
+      }
+      return pts;
+    }
+
+    // diag style: N/E on n×n grid, map '(' -> N and ')' -> E
+    let x = 0, y = 0;
+    const pts = [[x,y]];
+    for(const ch of dw){
+      if(ch === '('){ y += 1; }
+      else { x += 1; }
+      pts.push([x,y]);
+    }
+    return pts;
+  }
+
+  // ------------------ generic scaffold (fallback) ------------------
+  function buildPath_generic(code, style){
+    const n = code.length;
+    if(style==='flat'){
+      let x=0, y=0;
+      const pts=[[x,y]];
+      for(let i=0;i<n;i++){
+        const target = Math.max(0, Math.min(n, code[i]));
+        while(y < target){ x+=1; y+=1; pts.push([x,y]); }
+        while(y > target){ x+=1; y-=1; pts.push([x,y]); }
+        x+=1; y+= (y>0 ? -1 : 1);
+        pts.push([x,y]);
+      }
+      while(y>0){ x+=1; y-=1; pts.push([x,y]); }
+      return pts;
+    }
+    let x=0, y=0;
+    const pts=[[x,y]];
+    for(let i=0;i<n;i++){
+      const desiredY = clamp(code[i] + i, 0, n);
+      while(y < desiredY){ y+=1; pts.push([x,y]); }
+      x+=1; pts.push([x,y]);
+    }
+    while(y < n){ y+=1; pts.push([x,y]); }
+    return pts;
+  }
+
+  function refreshViews(){
+    renderTableau();
+    drawPath();
+  }
+
+  function resetAll(){
+    n = clamp(Number($('nInput').value||6), 1, 30);
+    $('nInput').value = n;
+
+    perm = [];
+    code = [];
+    reversePerm = [];
+    reverseCode = [];
+    complementPerm = [];
+    complementCode = [];
+    complementReversePerm = [];
+    complementReverseCode = [];
+
+    syncingFromPerm = true; $('permBox').value = ''; syncingFromPerm = false;
+    syncingFromCode = true; $('codeBox').value = ''; syncingFromCode = false;
+
+    $('permOut').textContent = '[]';
+    $('lehmerOut').textContent = '[]';
+    $('revPermOut').textContent = '[]';
+    $('revLehmerOut').textContent = '[]';
+    $('compPermOut').textContent = '[]';
+    $('compLehmerOut').textContent = '[]';
+    $('compRevPermOut').textContent = '[]';
+    $('compRevLehmerOut').textContent = '[]';
+    $('topStatus').textContent = 'Waiting…';
+
+    refreshAvoidStatus();
+    refreshViews();
+  }
+
+  // ---- events ----
+  $('resetBtn').addEventListener('click', resetAll);
+  $('nInput').addEventListener('change', resetAll);
+
+  $('permBox').addEventListener('input', ()=>{
+    if(syncingFromCode) return;
+    const p = parseSeq($('permBox').value);
+    if(p.length===0){ resetAll(); return; }
+    setGlobalFromPerm(p);
+  });
+
+  $('codeBox').addEventListener('input', ()=>{
+    if(syncingFromPerm) return;
+    const c = parseSeq($('codeBox').value);
+    if(c.length===0){ resetAll(); return; }
+    setGlobalFromCode(c);
+  });
+
+  document.querySelectorAll('.pat').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.pat').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedPattern = btn.dataset.pat;
+      refreshAvoidStatus();
+      drawPath();
+    });
+  });
+
+  $('drawPathBtn').addEventListener('click', drawPath);
+  $('pathStyle').addEventListener('change', drawPath);
+  $('gridMode').addEventListener('change', drawPath);
+
+  document.querySelectorAll('.mirrorBtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.tableau;
+      tableauMirror[id] = !tableauMirror[id];
+      renderTableau();
+    });
+  });
+
+  // boot
+  resetAll();
+})();
+</script>
+</body>
+</html>

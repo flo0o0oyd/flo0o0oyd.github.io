@@ -226,11 +226,13 @@ header h1 {
     background-position: center;
 }
 
-
-
 .panel:hover { transform: translateY(-10px); }
 .panel:hover .overlay { background: rgba(0,0,0,0.4); opacity: 1; }
 .panel .overlay:hover { background: rgba(0, 0, 0, 0.55); }
+
+
+
+
 
 
 
